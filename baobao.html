@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宝宝食品分析助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .app-screens {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .screen {
+            background-color: white;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 430px;
+            height: 932px;
+            position: relative;
+        }
+        
+        .screen-title {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin: 60px 0 30px;
+            font-size: 24px;
+            color: #333;
+            position: relative;
+        }
+        
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #4E7BF2, #FF6B6B);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        /* 首页样式 */
+        .home-screen {
+            background-color: #f8f9fe;
+            padding: 20px;
+        }
+
+        .search-bar {
+            background-color: white;
+            border-radius: 20px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-bar .icon {
+            color: #ccc;
+            margin-right: 10px;
+        }
+
+        .search-bar .text {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .scan-button {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #4E7BF2, #3468FE);
+            border-radius: 60px;
+            margin: 30px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(62, 104, 254, 0.3);
+        }
+
+        .scan-button .icon {
+            color: white;
+            font-size: 40px;
+        }
+
+        .scan-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-button {
+            padding: 10px 15px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+        }
+
+        .action-button .icon {
+            margin-right: 5px;
+            color: #4E7BF2;
+        }
+
+        .action-button .text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .recent-scans {
+            margin-top: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-header .title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .section-header .more {
+            font-size: 12px;
+            color: #4E7BF2;
+        }
+
+        .cards-container {
+            display: flex;
+            overflow-x: auto;
+            padding: 5px 0;
+            gap: 15px;
+        }
+
+        .card {
+            flex: 0 0 auto;
+            width: 150px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 80px;
+            background-color: #f1f3f9;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-right: 5px;
+        }
+
+        .tag-safe {
+            background-color: #e8f7ee;
+            color: #34C759;
+        }
+
+        .tag-warning {
+            background-color: #fff4e5;
+            color: #FF9500;
+        }
+
+        .tag-danger {
+            background-color: #ffebeb;
+            color: #FF3B30;
+        }
+
+        .nav-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #f1f1f1;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-item .icon {
+            font-size: 24px;
+            color: #ccc;
+            margin-bottom: 5px;
+        }
+
+        .nav-item .text {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .nav-item.active .icon {
+            color: #4E7BF2;
+        }
+
+        .nav-item.active .text {
+            color: #4E7BF2;
+        }
+
+        /* 扫描结果页样式 */
+        .result-screen {
+            background-color: #f8f9fe;
+            position: relative;
+        }
+
+        .result-header {
+            background: linear-gradient(135deg, #4E7BF2, #3468FE);
+            height: 140px;
+            border-radius: 0 0 30px 30px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .back-button {
+            color: white;
+            font-size: 20px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .share-button {
+            color: white;
+            font-size: 20px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .product-info {
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: -60px 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            background-color: #f1f3f9;
+            margin-bottom: 15px;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-brand {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .safety-score {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background-color: #e8f7ee;
+            color: #34C759;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .score-details {
+            flex: 1;
+        }
+
+        .score-text {
+            font-weight: bold;
+            font-size: 16px;
+            color: #34C759;
+            margin-bottom: 5px;
+        }
+
+        .score-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .analysis-section {
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .analysis-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .analysis-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .analysis-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            font-size: 14px;
+            color: white;
+        }
+
+        .icon-safe {
+            background-color: #34C759;
+        }
+
+        .icon-warning {
+            background-color: #FF9500;
+        }
+
+        .icon-danger {
+            background-color: #FF3B30;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .suggestion-section {
+            background-color: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 0 20px 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .alternatives {
+            display: flex;
+            overflow-x: auto;
+            padding: 5px 0;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .alt-card {
+            flex: 0 0 auto;
+            width: 120px;
+            background-color: #f8f9fe;
+            border-radius: 15px;
+            padding: 10px;
+        }
+
+        .alt-image {
+            width: 100%;
+            height: 70px;
+            background-color: #f1f3f9;
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .alt-title {
+            font-size: 12px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 5px;
+        }
+
+        .alt-score {
+            font-size: 11px;
+            color: #34C759;
+        }
+
+        /* 扫描页面样式 */
+        .scanning-screen {
+            background-color: rgba(0, 0, 0, 0.9);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-view {
+            width: 100%;
+            height: 100%;
+            background-color: #333;
+            position: absolute;
+        }
+
+        .scan-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 40%;
+            border: 2px dashed white;
+            border-radius: 15px;
+        }
+
+        .scan-corners {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-color: #4E7BF2;
+            border-style: solid;
+        }
+
+        .top-left {
+            top: -2px;
+            left: -2px;
+            border-width: 4px 0 0 4px;
+            border-top-left-radius: 15px;
+        }
+
+        .top-right {
+            top: -2px;
+            right: -2px;
+            border-width: 4px 4px 0 0;
+            border-top-right-radius: 15px;
+        }
+
+        .bottom-left {
+            bottom: -2px;
+            left: -2px;
+            border-width: 0 0 4px 4px;
+            border-bottom-left-radius: 15px;
+        }
+
+        .bottom-right {
+            bottom: -2px;
+            right: -2px;
+            border-width: 0 4px 4px 0;
+            border-bottom-right-radius: 15px;
+        }
+
+        .scan-instruction {
+            position: absolute;
+            top: 15%;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .scan-buttons {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .scan-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .scan-action-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background-color: rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .scan-action-text {
+            color: white;
+            font-size: 12px;
+        }
+
+        .close-scan {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 20px;
+        }
+
+        .flash-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>宝宝食品分析助手</h1>
+            <p>基于AI分析的婴幼儿食品安全评估工具</p>
+        </div>
+        
+        <h2 class="section-title">主要页面设计</h2>
+        <div class="app-screens">
+            <div>
+                <div class="screen home-screen">
+                    <div class="search-bar">
+                        <div class="icon">🔍</div>
+                        <div class="text">搜索食品或品牌</div>
+                    </div>
+                    
+                    <div class="scan-button">
+                        <div class="icon">📷</div>
+                    </div>
+                    <div class="scan-text">扫描食品配料表</div>
+                    
+                    <div class="quick-actions">
+                        <div class="action-button">
+                            <div class="icon">📁</div>
+                            <div class="text">相册导入</div>
+                        </div>
+                        <div class="action-button">
+                            <div class="icon">📝</div>
+                            <div class="text">手动输入</div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-scans">
+                        <div class="section-header">
+                            <div class="title">最近扫描</div>
+                            <div class="more">查看全部</div>
+                        </div>
+                        <div class="cards-container">
+                            <div class="card">
+                                <div class="card-image"></div>
+                                <div class="card-title">有机米粉</div>
+                                <div class="card-tag tag-safe">安全</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-image"></div>
+                                <div class="card-title">草莓果泥</div>
+                                <div class="card-tag tag-warning">注意</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-image"></div>
+                                <div class="card-title">婴儿饼干</div>
+                                <div class="card-tag tag-danger">风险</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-scans">
+                        <div class="section-header">
+                            <div class="title">热门食品</div>
+                            <div class="more">更多</div>
+                        </div>
+                        <div class="cards-container">
+                            <div class="card">
+                                <div class="card-image"></div>
+                                <div class="card-title">DHA鱼肝油</div>
+                                <div class="card-tag tag-safe">安全</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-image"></div>
+                                <div class="card-title">钙铁锌米粉</div>
+                                <div class="card-tag tag-safe">安全</div>
+                            </div>
+                            <div class="card">
+                                <div class="card-image"></div>
+                                <div class="card-title">益生菌奶粉</div>
+                                <div class="card-tag tag-warning">注意</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-bar">
+                        <div class="nav-item active">
+                            <div class="icon">🏠</div>
+                            <div class="text">首页</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="icon">📊</div>
+                            <div class="text">报告</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="icon">📚</div>
+                            <div class="text">百科</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="icon">👤</div>
+                            <div class="text">我的</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">首页</div>
+            </div>
+            
+            <div>
+                <div class="screen scanning-screen">
+                    <div class="camera-view"></div>
+                    <div class="close-scan">✕</div>
+                    <div class="flash-button">⚡</div>
+                    
+                    <div class="scan-instruction">将配料表对准框内</div>
+                    
+                    <div class="scan-frame">
+                        <div class="scan-corners top-left"></div>
+                        <div class="scan-corners top-right"></div>
+                        <div class="scan-corners bottom-left"></div>
+                        <div class="scan-corners bottom-right"></div>
+                    </div>
+                    
+                    <div class="scan-buttons">
+                        <div class="scan-action">
+                            <div class="scan-action-button">
+                                <div style="color: white; font-size: 24px;">📁</div>
+                            </div>
+                            <div class="scan-action-text">从相册选择</div>
+                        </div>
+                        
+                        <div class="scan-action">
+                            <div class="scan-action-button" style="background-color: #4E7BF2;">
+                                <div style="color: white; font-size: 24px;">📷</div>
+                            </div>
+                            <div class="scan-action-text">拍照</div>
+                        </div>
+                        
+                        <div class="scan-action">
+                            <div class="scan-action-button">
+                                <div style="color: white; font-size: 24px;">📦</div>
+                            </div>
+                            <div class="scan-action-text">扫条形码</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">扫描页面</div>
+            </div>
+            
+            <div>
+                <div class="screen result-screen">
+                    <div class="result-header">
+                        <div class="back-button">←</div>
+                        <div class="share-button">⋮</div>
+                    </div>
+                    
+                    <div class="product-info">
+                        <div class="product-image"></div>
+                        <div class="product-name">有机胡萝卜水果条</div>
+                        <div class="product-brand">品牌：贝拉米(Bellamy's)</div>
+                        
+                        <div class="safety-score">
+                            <div class="score-circle">92</div>
+                            <div class="score-details">
+                                <div class="score-text">安全推荐</div>
+                                <div class="score-desc">适合9个月以上宝宝</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <div class="analysis-title">成分分析</div>
+                        
+                        <div class="analysis-item">
+                            <div class="item-icon icon-safe">✓</div>
+                            <div class="item-content">
+                                <div class="item-title">有机认证</div>
+                                <div class="item-desc">通过欧盟有机食品认证</div>
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <div class="item-icon icon-safe">✓</div>
+                            <div class="item-content">
+                                <div class="item-title">无添加糖</div>
+                                <div class="item-desc">纯天然水果提取甜味</div>
+                            </div>
+                        </div>
+                        
+                        <div class="analysis-item">
+                            <div class="item-icon icon-warning">!</div>
+                            <div class="item-content">
+                                <div class="item-title">钠含量适中</div>
+                                <div class="item-desc">120mg/100g，符合标准</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="suggestion-section">
+                        <div class="analysis-title">更好的选择</div>
+                        <div class="alternatives">
+                            <div class="alt-card">
+                                <div class="alt-image"></div>
+                                <div class="alt-title">有机蔬果条</div>
+                                <div class="alt-score">安全评分：96</div>
+                            </div>
+                            <div class="alt-card">
+                                <div class="alt-image"></div>
+                                <div class="alt-title">水果泥</div>
+                                <div class="alt-score">安全评分：95</div>
+                            </div>
+                            <div class="alt-card">
+                                <div class="alt-image"></div>
+                                <div class="alt-title">胡萝卜米饼</div>
+                                <div class="alt-score">安全评分：94</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">扫描结果</div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">百科和宝宝档案</h2>
+        <div class="app-screens">
+            <div>
+                <div class="screen home-screen" style="background-color: #f8f9fe; padding: 20px;">
+                    <div class="search-bar">
+                        <div class="icon">🔍</div>
+                        <div class="text">搜索成分、品牌或食品</div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div class="section-header">
+                            <div class="title">成分百科</div>
+                            <div class="more">更多</div>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+                            <div style="background-color: #e8f7ee; border-radius: 15px; padding: 15px; display: flex; flex-direction: column; align-items: center;">
+                                <div style="width: 40px; height: 40px; border-radius: 20px; background-color: #34C759; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                                    <div style="color: white; font-size: 20px;">🥕</div>
+                                </div>
+                                <div style="font-size: 14px; color: #333; font-weight: 500;">天然成分</div>
+                            </div>
+                            
+                            <div style="background-color: #fff4e5; border-radius: 15px; padding: 15px; display: flex; flex-direction: column; align-items: center;">
+                                <div style="width: 40px; height: 40px; border-radius: 20px; background-color: #FF9500; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                                    <div style="color: white; font-size: 20px;">🧂</div>
+                                </div>
+                                <div style="font-size: 14px; color: #333; font-weight: 500;">添加剂</div>
+                            </div>
+                            
+                            <div style="background-color: #ffebeb; border-radius: 15px; padding: 15px; display: flex; flex-direction: column; align-items: center;">
+                                <div style="width: 40px; height: 40px; border-radius: 20px; background-color: #FF3B30; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                                    <div style="color: white; font-size: 20px;">⚠️</div>
+                                </div>
+                                <div style="font-size: 14px; color: #333; font-weight: 500;">过敏原</div>
+                            </div>
+                            
+                            <div style="background-color: #e8f0fb; border-radius: 15px; padding: 15px; display: flex; flex-direction: column; align-items: center;">
+                                <div style="width: 40px; height: 40px; border-radius: 20px; background-color: #4E7BF2; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                                    <div style="color: white; font-size: 20px;">🔬</div>
+                                </div>
+                                <div style="font-size: 14px; color: #333; font-weight: 500;">防腐剂</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <div class="section-header">
+                            <div class="title">热门话题</div>
+                            <div class="more">查看全部</div>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <div style="background-color: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);">
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <div style="width: 30px; height: 30px; border-radius: 15px; background-color: #e8f7ee; display: flex; justify-content: center; align-items: center; margin-right: 10px;">
+                                        <div style="color: #34C759; font-size: 16px;">🍯</div>
+                                    </div>
+                                    <div style="font-size: 15px; color: #333; font-weight: 500;">蜂蜜对婴儿安全吗？</div>
+                                </div>
+                                <div style="font-size: 13px; color: #666; line-height: 1.5;">
+                                    1岁以下婴儿不宜食用蜂蜜，因为其中可能含有肉毒杆菌芽孢...
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                                    <div style="font-size: 12px; color: #999;">3天前更新</div>
+                                    <div style="font-size: 12px; color: #4E7BF2;">阅读全文</div>
+                                </div>
+                            </div>
+                            
+                            <div style="background-color: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);">
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                    <div style="width: 30px; height: 30px; border-radius: 15px; background-color: #fff4e5; display: flex; justify-content: center; align-items: center; margin-right: 10px;">
+                                        <div style="color: #FF9500; font-size: 16px;">🥜</div>
+                                    </div>
+                                    <div style="font-size: 15px; color: #333; font-weight: 500;">如何预防花生过敏</div>
+                                </div>
+                                <div style="font-size: 13px; color: #666; line-height: 1.5;">
+                                    最新研究表明，适量早期接触可能有助于降低花生过敏风险...
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                                    <div style="font-size: 12px; color: #999;">1周前更新</div>
+                                    <div style="font-size: 12px; color: #4E7BF2;">阅读全文</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-bar">
+                        <div class="nav-item">
+                            <div class="icon">🏠</div>
+                            <div class="text">首页</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="icon">📊</div>
+                            <div class="text">报告</div>
+                        </div>
+                        <div class="nav-item active">
+                            <div class="icon">📚</div>
+                            <div class="text">百科</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="icon">👤</div>
+                            <div class="text">我的</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">百科页面</div>
+            </div>
+            
+            <div>
+                <div class="screen" style="background-color: #f8f9fe; padding: 0;">
+                    <div style="background-color: #4E7BF2; height: 100px; padding: 20px; color: white; position: relative; border-radius: 0 0 30px 30px;">
+                        <div style="font-size: 18px; font-weight: bold; margin-top: 20px;">宝宝档案</div>
+                        <div style="font-size: 14px; margin-top: 5px; opacity: 0.8;">记录宝宝的成长历程</div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 0 20px;">
+                        <div style="background-color: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+                            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                                <div style="width: 60px; height: 60px; border-radius: 30px; background-color: #f1f3f9; margin-right: 15px;"></div>
+                                <div>
+                                    <div style="font-size: 18px; font-weight: bold; color: #333; margin-bottom: 5px;">小豆豆</div>
+                                    <div style="font-size: 14px; color: #999;">9个月 | 女宝宝</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 16px; font-weight: bold; color: #333;">68cm</div>
+                                    <div style="font-size: 12px; color: #999; margin-top: 5px;">身高</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 16px; font-weight: bold; color: #333;">7.8kg</div>
+                                    <div style="font-size: 12px; color: #999; margin-top: 5px;">体重</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 16px; font-weight: bold; color: #333;">2颗</div>
+                                    <div style="font-size: 12px; color: #999; margin-top: 5px;">牙齿</div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between;">
+                                <div style="background-color: #e8f7ee; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center;">
+                                    <div style="color: #34C759; margin-right: 5px;">📈</div>
+                                    <div style="font-size: 12px; color: #333;">身高正常</div>
+                                </div>
+                                <div style="background-color: #e8f7ee; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center;">
+                                    <div style="color: #34C759; margin-right: 5px;">📈</div>
+                                    <div style="font-size: 12px; color: #333;">体重正常</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 0 20px;">
+                        <div style="background-color: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+                            <div style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 15px;">饮食禁忌</div>
+                            
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                <div style="background-color: #ffebeb; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center;">
+                                    <div style="color: #FF3B30; margin-right: 5px;">🥛</div>
+                                    <div style="font-size: 12px; color: #333;">牛奶蛋白过敏</div>
+                                </div>
+                                <div style="background-color: #fff4e5; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center;">
+                                    <div style="color: #FF9500; margin-right: 5px;">🍯</div>
+                                    <div style="font-size: 12px; color: #333;">蜂蜜</div>
+                                </div>
+                                <div style="background-color: #fff4e5; padding: 8px 15px; border-radius: 20px; display: flex; align-items: center;">
+                                    <div style="color: #FF9500; margin-right: 5px;">🧂</div>
+                                    <div style="font-size: 12px; color: #333;">高钠食品</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding: 0 20px;">
+                        <div style="background-color: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+                            <div style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 15px;">喂养建议</div>
+                            
+                            <div style="background-color: #f8f9fe; border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                                <div style="font-size: 14px; font-weight: 500; color: #333; margin-bottom: 5px;">9-12个月喂养重点</div>
+                                <div style="font-size: 12px; color: #666; line-height: 1.5;">
+                                    ● 添加多样化辅食，可适当增加质地<br>
+                                    ● 鼓励自主进食，培养手抓食物能力<br>
+                                    ● 继续母乳或配方奶喂养
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center;">
+                                <div style="display: inline-block; padding: 8px 20px; background-color: #4E7BF2; color: white; border-radius: 20px; font-size: 14px;">获取个性化喂养方案</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-bar">
+                        <div class="nav-item">
+                            <div class="icon">🏠</div>
+                            <div class="text">首页</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="icon">📊</div>
+                            <div class="text">报告</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="icon">📚</div>
+                            <div class="text">百科</div>
+                        </div>
+                        <div class="nav-item active">
+                            <div class="icon">👤</div>
+                            <div class="text">我的</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">宝宝档案</div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">数据统计</h2>
+        <div class="app-screens">
+            <div>
+                <div class="screen" style="background-color: #f8f9fe; padding: 20px;">
+                    <div style="font-size: 22px; font-weight: bold; color: #333; margin-top: 20px; margin-bottom: 20px;">营养摄入报告</div>
+                    
+                    <div style="background-color: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                            <div style="font-size: 16px; font-weight: bold; color: #333;">本周总览</div>
+                            <div style="font-size: 14px; color: #4E7BF2;">9月1日-9月7日</div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 30px;">
+                            <div style="text-align: center; flex: 1;">
+                                <div style="font-size: 22px; font-weight: bold; color: #333;">24</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 5px;">扫描次数</div>
+                            </div>
+                            <div style="text-align: center; flex: 1;">
+                                <div style="font-size: 22px; font-weight: bold; color: #333;">85%</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 5px;">安全食品占比</div>
+                            </div>
+                            <div style="text-align: center; flex: 1;">
+                                <div style="font-size: 22px; font-weight: bold; color: #333;">3种</div>
+                                <div style="font-size: 12px; color: #999; margin-top: 5px;">风险添加剂</div>
+                            </div>
+                        </div>
+                        
+                        <div style="height: 150px; background-color: #f8f9fe; border-radius: 10px; position: relative; overflow: hidden; margin-bottom: 15px;">
+                            <div style="position: absolute; bottom: 0; left: 0; width: 14%; height: 60%; background-color: #4E7BF2; border-radius: 5px 5px 0 0;"></div>
+                            <div style="position: absolute; bottom: 0; left: 15%; width: 14%; height: 80%; background-color: #4E7BF2; border-radius: 5px 5px 0 0;"></div>
+                            <div style="position: absolute; bottom: 0; left: 30%; width: 14%; height: 40%; background-color: #4E7BF2; border-radius: 5px 5px 0 0;"></div>
+                            <div style="position: absolute; bottom: 0; left: 45%; width: 14%; height: 90%; background-color: #4E7BF2; border-radius: 5px 5px 0 0;"></div>
+                            <div style="position: absolute; bottom: 0; left: 60%; width: 14%; height: 70%; background-color: #4E7BF2; border-radius: 5px 5px 0 0;"></div>
+                            <div style="position: absolute; bottom: 0; left: 75%; width: 14%; height: 50%; background-color: #4E7BF2; border-radius: 5px 5px 0 0;"></div>
+                            <div style="position: absolute; bottom: 0; left: 90%; width: 14%; height: 65%; background-color: #4E7BF2; border-radius: 5px 5px 0 0;"></div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between;">
+                            <div style="font-size: 10px; color: #999;">周一</div>
+                            <div style="font-size: 10px; color: #999;">周二</div>
+                            <div style="font-size: 10px; color: #999;">周三</div>
+                            <div style="font-size: 10px; color: #999;">周四</div>
+                            <div style="font-size: 10px; color: #999;">周五</div>
+                            <div style="font-size: 10px; color: #999;">周六</div>
+                            <div style="font-size: 10px; color: #999;">周日</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background-color: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+                        <div style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 20px;">营养素摄入</div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <div style="font-size: 14px; color: #333;">蛋白质</div>
+                                <div style="font-size: 14px; color: #333;">85%</div>
+                            </div>
+                            <div style="height: 6px; background-color: #f2f2f2; border-radius: 3px; overflow: hidden;">
+                                <div style="height: 100%; width: 85%; background-color: #4E7BF2; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <div style="font-size: 14px; color: #333;">碳水化合物</div>
+                                <div style="font-size: 14px; color: #333;">70%</div>
+                            </div>
+                            <div style="height: 6px; background-color: #f2f2f2; border-radius: 3px; overflow: hidden;">
+                                <div style="height: 100%; width: 70%; background-color: #4E7BF2; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <div style="font-size: 14px; color: #333;">脂肪</div>
+                                <div style="font-size: 14px; color: #333;">60%</div>
+                            </div>
+                            <div style="height: 6px; background-color: #f2f2f2; border-radius: 3px; overflow: hidden;">
+                                <div style="height: 100%; width: 60%; background-color: #4E7BF2; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <div style="font-size: 14px; color: #333;">钙</div>
+                                <div style="font-size: 14px; color: #FF9500;">45%</div>
+                            </div>
+                            <div style="height: 6px; background-color: #f2f2f2; border-radius: 3px; overflow: hidden;">
+                                <div style="height: 100%; width: 45%; background-color: #FF9500; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <div style="font-size: 14px; color: #333;">铁</div>
+                                <div style="font-size: 14px; color: #FF3B30;">30%</div>
+                            </div>
+                            <div style="height: 6px; background-color: #f2f2f2; border-radius: 3px; overflow: hidden;">
+                                <div style="height: 100%; width: 30%; background-color: #FF3B30; border-radius: 3px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background-color: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+                        <div style="font-size: 16px; font-weight: bold; color: #333; margin-bottom: 20px;">本周风险物质</div>
+                        
+                        <div style="display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f1f1;">
+                            <div style="width: 30px; height: 30px; border-radius: 15px; background-color: #ffebeb; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                <div style="color: #FF3B30; font-size: 16px;">!</div>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 14px; color: #333; margin-bottom: 5px;">反式脂肪酸</div>
+                                <div style="font-size: 12px; color: #999;">出现在3种食品中</div>
+                            </div>
+                            <div style="font-size: 12px; color: #4E7BF2;">查看详情</div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f1f1;">
+                            <div style="width: 30px; height: 30px; border-radius: 15px; background-color: #fff4e5; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                <div style="color: #FF9500; font-size: 16px;">!</div>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 14px; color: #333; margin-bottom: 5px;">高钠含量</div>
+                                <div style="font-size: 12px; color: #999;">出现在5种食品中</div>
+                            </div>
+                            <div style="font-size: 12px; color: #4E7BF2;">查看详情</div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; padding: 10px 0;">
+                            <div style="width: 30px; height: 30px; border-radius: 15px; background-color: #fff4e5; display: flex; justify-content: center; align-items: center; margin-right: 15px;">
+                                <div style="color: #FF9500; font-size: 16px;">!</div>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 14px; color: #333; margin-bottom: 5px;">人工色素</div>
+                                <div style="font-size: 12px; color: #999;">出现在2种食品中</div>
+                            </div>
+                            <div style="font-size: 12px; color: #4E7BF2;">查看详情</div>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-bar">
+                        <div class="nav-item">
+                            <div class="icon">🏠</div>
+                            <div class="text">首页</div>
+                        </div>
+                        <div class="nav-item active">
+                            <div class="icon">📊</div>
+                            <div class="text">报告</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="icon">📚</div>
+                            <div class="text">百科</div>
+                        </div>
+                        <div class="nav-item">
+                            <div class="icon">👤</div>
+                            <div class="text">我的</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">数据统计</div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">用户登录</h2>
+        <div class="app-screens">
+            <div>
+                <div class="screen" style="background-color: #f8f9fe; padding: 0;">
+                    <div style="background: linear-gradient(135deg, #4E7BF2, #3468FE); height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 30px; border-radius: 0 0 30px 30px;">
+                        <div style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">宝宝食品分析助手</div>
+                        <div style="font-size: 14px; opacity: 0.9;">登录后享受更多专属服务</div>
+                    </div>
+                    
+                    <div style="padding: 30px 20px;">
+                        <div style="background-color: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 14px; color: #666; margin-bottom: 8px;">手机号码</div>
+                                <div style="position: relative;">
+                                    <input type="text" placeholder="请输入手机号码" style="width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 14px; color: #666; margin-bottom: 8px;">验证码</div>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text" placeholder="请输入验证码" style="flex: 1; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 14px; outline: none;">
+                                    <div style="background-color: #4E7BF2; color: white; padding: 0 15px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 14px; min-width: 100px; text-align: center;">
+                                        获取验证码
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 30px;">
+                                <div style="background: linear-gradient(90deg, #4E7BF2, #3468FE); color: white; padding: 14px; border-radius: 10px; text-align: center; font-size: 16px; font-weight: 500;">
+                                    登录
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: center; margin-top: 20px;">
+                                <div style="font-size: 12px; color: #999;">点击登录即表示您同意</div>
+                                <div style="font-size: 12px; color: #4E7BF2; margin-left: 5px;">《用户协议》和《隐私政策》</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <div style="text-align: center; font-size: 14px; color: #666; margin-bottom: 20px;">其他登录方式</div>
+                            
+                            <div style="display: flex; justify-content: center; gap: 40px;">
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div style="width: 50px; height: 50px; border-radius: 25px; background-color: white; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);">
+                                        <div style="color: #07C160; font-size: 26px;">📱</div>
+                                    </div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 8px;">微信</div>
+                                </div>
+                                
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div style="width: 50px; height: 50px; border-radius: 25px; background-color: white; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);">
+                                        <div style="color: #1296db; font-size: 26px;">🔑</div>
+                                    </div>
+                                    <div style="font-size: 12px; color: #666; margin-top: 8px;">账号密码</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">登录页</div>
+            </div>
+            
+            <div>
+                <div class="screen" style="background-color: #f8f9fe; padding: 0;">
+                    <div style="background: linear-gradient(135deg, #4E7BF2, #3468FE); height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; padding: 30px; border-radius: 0 0 30px 30px;">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">创建宝宝档案</div>
+                        <div style="font-size: 14px; opacity: 0.9;">获取个性化喂养建议</div>
+                    </div>
+                    
+                    <div style="padding: 30px 20px;">
+                        <div style="background-color: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);">
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 14px; color: #666; margin-bottom: 8px;">宝宝昵称</div>
+                                <div style="position: relative;">
+                                    <input type="text" placeholder="请输入宝宝昵称" style="width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 14px; outline: none; box-sizing: border-box;">
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 14px; color: #666; margin-bottom: 8px;">出生日期</div>
+                                <div style="display: flex; align-items: center; width: 100%; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 14px; box-sizing: border-box; justify-content: space-between;">
+                                    <div style="color: #999;">请选择出生日期</div>
+                                    <div style="color: #999;">📅</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 14px; color: #666; margin-bottom: 8px;">性别</div>
+                                <div style="display: flex; gap: 15px;">
+                                    <div style="flex: 1; padding: 12px 15px; border: 2px solid #4E7BF2; border-radius: 10px; font-size: 14px; display: flex; gap: 10px; align-items: center; justify-content: center; color: #4E7BF2; font-weight: 500;">
+                                        <div>👦</div>
+                                        <div>男宝宝</div>
+                                    </div>
+                                    <div style="flex: 1; padding: 12px 15px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 14px; display: flex; gap: 10px; align-items: center; justify-content: center; color: #999;">
+                                        <div>👧</div>
+                                        <div>女宝宝</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 30px;">
+                                <div style="background: linear-gradient(90deg, #4E7BF2, #3468FE); color: white; padding: 14px; border-radius: 10px; text-align: center; font-size: 16px; font-weight: 500;">
+                                    完成
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: 15px;">
+                                <div style="font-size: 12px; color: #999;">稍后可在"我的"页面完善资料</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="screen-title">创建档案</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
